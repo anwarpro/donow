@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.kotlinPluginSerialization)
 }
 
 kotlin {
@@ -25,7 +26,7 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -33,9 +34,9 @@ kotlin {
             }
         }
     }
-    
+
     jvm("desktop")
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -46,13 +47,17 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation("io.ktor:ktor-client-cio:3.0.0-wasm2")
+        }
+        iosMain.dependencies {
+            implementation("io.ktor:ktor-client-darwin:3.0.0-wasm2")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -61,9 +66,32 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+
+            implementation(project.dependencies.platform("io.github.jan-tennert.supabase:bom:2.2.3-wasm0"))
+            implementation("io.github.jan-tennert.supabase:gotrue-kt")
+            implementation("io.github.jan-tennert.supabase:realtime-kt")
+            implementation("io.github.jan-tennert.supabase:storage-kt")
+            implementation("io.github.jan-tennert.supabase:functions-kt")
+            implementation("io.github.jan-tennert.supabase:postgrest-kt")
+            implementation("io.github.jan-tennert.supabase:compose-auth")
+            implementation("io.github.jan-tennert.supabase:compose-auth-ui")
+
+            implementation("io.ktor:ktor-client-core:3.0.0-wasm2")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.0-wasm2")
+            implementation("io.ktor:ktor-client-content-negotiation:3.0.0-wasm2")
+
+            api("io.insert-koin:koin-core:3.6.0-alpha3")
+            api("io.insert-koin:koin-compose:1.2.0-alpha3")
+
+            api("moe.tlaster:precompose:1.6.0")
+            api("moe.tlaster:precompose-viewmodel:1.6.0") // For ViewModel intergration
+            api("moe.tlaster:precompose-koin:1.6.0") // For Koin intergration
+
+            implementation("io.github.aakira:napier:2.7.1")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation("io.ktor:ktor-client-cio:3.0.0-wasm2")
         }
     }
 }

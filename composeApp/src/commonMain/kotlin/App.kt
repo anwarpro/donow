@@ -1,35 +1,77 @@
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
+import io.github.jan.supabase.gotrue.SessionStatus
+import moe.tlaster.precompose.PreComposeApp
+import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.NavHost
+import moe.tlaster.precompose.navigation.rememberNavigator
+import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-import donow.composeapp.generated.resources.Res
-import donow.composeapp.generated.resources.compose_multiplatform
-
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+    PreComposeApp {
+        val navigator = rememberNavigator()
+
+        MaterialTheme {
+
+            val appViewModel = koinViewModel(vmClass = AppViewModel::class)
+            val sessionStatus by appViewModel.sessionStatus.collectAsState()
+
+            val initialRoute = when (sessionStatus) {
+                is SessionStatus.Authenticated -> "/home"
+                is SessionStatus.NotAuthenticated -> "/login"
+                else -> {
+                    "/splash"
+                }
             }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+
+            NavHost(
+                // Assign the navigator to the NavHost
+                navigator = navigator,
+                // Navigation transition for the scenes in this NavHost, this is optional
+                navTransition = NavTransition(),
+                // The start destination
+                initialRoute = initialRoute,
+            ) {
+                // Define a scene to the navigation graph
+                scene(
+                    // Scene's route path
+                    route = "/home",
+                    // Navigation transition for this scene, this is optional
+                    navTransition = NavTransition(),
+                ) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Text("Home")
+                    }
+                }
+
+                scene(
+                    route = "/login",
+                    navTransition = NavTransition()
+                ) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Text("Login")
+                    }
+                }
+
+                scene(
+                    route = "/splash",
+                    navTransition = NavTransition()
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
             }
         }
