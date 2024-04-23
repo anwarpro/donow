@@ -1,8 +1,8 @@
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,6 +14,7 @@ import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import ui.screen.LoginScreen
 
 @Composable
 @Preview
@@ -58,9 +59,7 @@ fun App() {
                     route = "/login",
                     navTransition = NavTransition()
                 ) {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        Text("Login")
-                    }
+                    LoginScreen()
                 }
 
                 scene(
