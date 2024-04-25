@@ -1,4 +1,4 @@
-package ui.screen
+package ui.screen.login
 
 import io.github.aakira.napier.Napier
 import io.github.jan.supabase.SupabaseClient
@@ -46,10 +46,14 @@ class LoginViewModel(
         kotlin.runCatching {
             when (action) {
                 is LoginAction.Login -> {
-                    supabaseClient.auth.signUpWith(Email) {
+                    supabaseClient.auth.signInWith(Email) {
                         this.email = action.email
                         this.password = action.password
                     }
+                }
+
+                LoginAction.LoginWithGoogle -> {
+                    
                 }
             }
         }.onSuccess {

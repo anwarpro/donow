@@ -7,11 +7,18 @@ import io.github.jan.supabase.gotrue.AuthConfig
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.RealtimeChannel
 import io.github.jan.supabase.realtime.channel
+import io.github.jan.supabase.serializer.KotlinXSerializer
+import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 
 expect fun AuthConfig.platformGoTrueConfig()
 
 val supabaseModule = module {
+    single<Json> {
+        Json {
+            coerceInputValues = true
+        }
+    }
     single {
         createSupabaseClient(
             supabaseUrl = "https://ctbvplmwlpqfscnsbfxw.supabase.co",
@@ -19,10 +26,7 @@ val supabaseModule = module {
         ) {
             install(Auth)
             install(Postgrest)
+            defaultSerializer = KotlinXSerializer(json = get())
         }
-    }
-
-    single<RealtimeChannel> {
-        get<SupabaseClient>().channel("tasks")
     }
 }

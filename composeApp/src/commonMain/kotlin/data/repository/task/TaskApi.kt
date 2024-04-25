@@ -42,11 +42,13 @@ internal class TaskApiImpl(
         val user = (client.auth.currentSessionOrNull() ?: error("No session available")).user
             ?: error("No user available")
 
-        return table.insert(buildJsonObject {
-            put("title", title)
-            put("description", description)
-            put("user_id", user.id)
-        }) {
+        return table.insert(
+            buildJsonObject {
+                put("title", title)
+                put("description", description)
+                put("user_id", user.id)
+            }
+        ) {
             select()
         }.decodeSingle()
     }

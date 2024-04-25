@@ -2,7 +2,8 @@ package di
 
 import AppViewModel
 import org.koin.dsl.module
-import ui.screen.LoginViewModel
+import ui.screen.home.HomeViewModel
+import ui.screen.login.LoginViewModel
 
 val viewModelModule = module {
     factory {
@@ -10,5 +11,8 @@ val viewModelModule = module {
     }
     factory {
         LoginViewModel(supabaseClient = get())
+    }
+    factory {
+        HomeViewModel(taskApi = get(), supabaseClient = get())
     }
 }

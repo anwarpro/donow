@@ -1,8 +1,9 @@
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,8 +15,10 @@ import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import ui.screen.LoginScreen
+import ui.screen.home.HomeScreen
+import ui.screen.login.LoginScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 fun App() {
@@ -50,9 +53,7 @@ fun App() {
                     // Navigation transition for this scene, this is optional
                     navTransition = NavTransition(),
                 ) {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        Text("Home")
-                    }
+                    HomeScreen(modifier = Modifier.fillMaxSize())
                 }
 
                 scene(
