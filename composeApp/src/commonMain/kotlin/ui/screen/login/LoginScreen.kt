@@ -51,7 +51,7 @@ fun LoginScreenContent(
     ) {
         AuthForm {
             var password by remember { mutableStateOf("34722645") }
-            var email by remember { mutableStateOf("anwar@programming-hero.com") }
+            var email by remember { mutableStateOf("anwar.hussen.pro@gmail.com") }
             var phone by remember { mutableStateOf("") }
 
             val authState = LocalAuthState.current

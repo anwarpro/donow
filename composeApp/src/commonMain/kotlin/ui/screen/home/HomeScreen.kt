@@ -24,12 +24,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.jan.supabase.annotations.SupabaseExperimental
-import io.github.jan.supabase.compose.auth.ui.AuthForm
-import io.github.jan.supabase.compose.auth.ui.email.OutlinedEmailField
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
 
@@ -72,7 +69,7 @@ fun HomeScreenContent(
         floatingActionButtonPosition = FabPosition.EndOverlay
     ) {
         Column(modifier = Modifier.fillMaxSize().padding(it)) {
-            state.tasks.forEach {
+            state.tasks?.items?.forEach {
                 Text(it.title)
             }
         }

@@ -1,14 +1,11 @@
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import io.github.jan.supabase.gotrue.SessionStatus
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.NavHost
@@ -18,7 +15,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import ui.screen.home.HomeScreen
 import ui.screen.login.LoginScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 fun App() {
@@ -28,14 +24,12 @@ fun App() {
         MaterialTheme {
 
             val appViewModel = koinViewModel(vmClass = AppViewModel::class)
-            val sessionStatus by appViewModel.sessionStatus.collectAsState()
+            val sessionStatus by appViewModel.authFlow.collectAsState()
 
-            val initialRoute = when (sessionStatus) {
-                is SessionStatus.Authenticated -> "/home"
-                is SessionStatus.NotAuthenticated -> "/login"
-                else -> {
-                    "/splash"
-                }
+            val initialRoute = if (sessionStatus != null) {
+                "/home"
+            } else {
+                "/login"
             }
 
             NavHost(

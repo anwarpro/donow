@@ -62,7 +62,6 @@ class HomeViewModel(
                 }.onFailure {
                     //check for 401
                     //refresh
-                    supabaseClient.auth.refreshCurrentSession()
                     Napier.e(throwable = it, tag = "HomeViewModel") { "" }
                 }
             }

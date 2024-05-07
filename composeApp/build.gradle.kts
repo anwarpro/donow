@@ -54,10 +54,11 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
-            implementation("io.ktor:ktor-client-cio:3.0.0-wasm2")
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.okhttp)
         }
         iosMain.dependencies {
-            implementation("io.ktor:ktor-client-darwin:3.0.0-wasm2")
+            implementation(libs.ktor.client.darwin)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -88,10 +89,21 @@ kotlin {
             api("moe.tlaster:precompose-koin:1.6.0") // For Koin intergration
 
             implementation("io.github.aakira:napier:2.7.1")
+
+            implementation("dev.shreyaspatil.generativeai:generativeai-google:0.5.0-1.0.0-wasm")
+
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("io.ktor:ktor-client-cio:3.0.0-wasm2")
+            implementation(libs.ktor.client.okhttp)
+        }
+
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs {
+            dependencies {
+                implementation(libs.ktor.client.js)
+            }
         }
     }
 }

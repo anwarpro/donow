@@ -7,10 +7,10 @@ import ui.screen.login.LoginViewModel
 
 val viewModelModule = module {
     factory {
-        AppViewModel(supabaseClient = get(), taskApi = get())
+        AppViewModel(supabaseClient = get(), taskApi = get(), pocketbaseClient = get())
     }
     factory {
-        LoginViewModel(supabaseClient = get())
+        LoginViewModel(supabaseClient = get(), pocketbaseClient = get())
     }
     factory {
         HomeViewModel(taskApi = get(), supabaseClient = get())

@@ -1,64 +1,53 @@
 package data.repository.task
 
-import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.gotrue.auth
-import io.github.jan.supabase.postgrest.postgrest
+import io.github.agrevster.pocketbaseKotlin.PocketbaseClient
+import io.github.agrevster.pocketbaseKotlin.models.Record
+import io.github.agrevster.pocketbaseKotlin.models.utils.ListResult
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Serializable
-data class Task(
-    val id: Int,
+data class TaskRecord(
     val title: String,
     val description: String,
-    @SerialName("user_id")
-    val userId: String,
-    @SerialName("created_at")
-    val createdAt: Instant
-)
-
+    val author: String? = null,
+    val createdAt: Instant? = null
+) : Record()
 
 sealed interface TaskApi {
 
-    suspend fun retrieveTasks(): List<Task>
+    suspend fun retrieveTasks(): ListResult<TaskRecord>
 
-    suspend fun createTask(title: String, description: String): Task
+    suspend fun createTask(title: String, description: String): TaskRecord
 
-    suspend fun deleteTask(id: Int)
+    suspend fun deleteTask(id: String): Boolean
 
 }
 
 internal class TaskApiImpl(
-    private val client: SupabaseClient
+    private val client: PocketbaseClient
 ) : TaskApi {
-    private val table = client.postgrest["tasks"]
+    override suspend fun retrieveTasks(): ListResult<TaskRecord> =
+        client.records.getList(sub = "tasks", page = 1, perPage = 20)
 
-    override suspend fun retrieveTasks(): List<Task> = table.select().decodeList()
+    override suspend fun createTask(title: String, description: String): TaskRecord {
+        val response = client.records.create<TaskRecord>(
+            sub = "tasks",
+            body = Json.encodeToString(
+                TaskRecord(
+                    title = title,
+                    description = description
+                )
+            )
+        )
 
-    override suspend fun createTask(title: String, description: String): Task {
-        val user = (client.auth.currentSessionOrNull() ?: error("No session available")).user
-            ?: error("No user available")
-
-        return table.insert(
-            buildJsonObject {
-                put("title", title)
-                put("description", description)
-                put("user_id", user.id)
-            }
-        ) {
-            select()
-        }.decodeSingle()
+        return response
     }
 
-    override suspend fun deleteTask(id: Int) {
-        table.delete {
-            filter {
-                Task::id eq id
-            }
-        }
+    override suspend fun deleteTask(id: String): Boolean {
+        return client.records.delete(sub = "tasks", id = id)
     }
-
 }
